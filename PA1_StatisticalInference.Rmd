@@ -1,0 +1,84 @@
+---
+title: "PA1_StatisticalInference"
+author: "Rafael Mendez"
+date: "August 19, 2015"
+output: pdf_document
+---
+Purpose: 
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials.  
+
+Load in Global Knitr Parameters
+```{r}
+library(knitr)
+opts_chunk$set(echo = TRUE, results = 'hold')  
+```
+
+#1. Show the sample mean and compare it to the theoretical (expected) mean of the distribution.
+
+##Create Simulation with 40 samples and 1000 num of simulations 
+```{r}
+#Set the constants
+set.seed(50) # Make simulation reproducible
+lambda <- 0.2  # set for rex, the rate parameter
+samples <- 40 #number of exponetials being distributed
+sim <- 1000 # number of tests
+sample_mean <- NULL #initalize sample_mean
+for (i in 1:sim) sample_mean <- c(sample_mean, mean(rexp(samples, lambda)))
+```
+
+##Compare Sample Mean vs Theoritical Mean 
+
+##Report the Sample Mean
+```{r}
+mean_of_means<- round(mean(sample_mean))
+mean_of_means
+```
+
+##Report the Theoretical Mean - expected mean mu of expoential distribution rate lambda given = .20
+```{r}
+mu <- 1/lambda 
+mu
+```
+
+results: Shows that the sample mean and expected mean are closely related.
+
+#2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+##Compare Sample Variance vs Theoretical Variance
+
+##Report the Sample Variance
+```{r}
+#var() function to get sample variance 
+variance_sample<-var(sample_mean)
+variance_sample
+```
+
+##Calculate the Expected Standard Deviation of a exponential distribution of rate parameter lambda 
+As variance = sd ^ 2. Find the sd through 1/(lambda/sqrt(#ofsamples))
+```{r}
+sd <- 1/lambda/sqrt(samples)
+sd
+```
+
+##Report the Theoretical Variance of Distribution
+```{r}
+variance_theoretical<- sd^2
+variance_theoretical
+```
+
+#3. Show that the distribution is approximately normal.
+We use a normal distribution of expected values to compare the population means and standard deviation.
+The normal fitted curve shows the normal distribution
+ 
+```{r echo=FALSE}
+#Note that histograms are strongly affected by the number of bins used
+normal_curve_hist <- hist(sample_mean, breaks=30, col = "red") 
+#Add a normal curve
+xfit <- seq(min(sample_mean), max(sample_mean), length = 40) #dictates 
+yfit <- dnorm(xfit, mean = mean(sample_mean), sd = sd(sample_mean)) 
+yfit <- yfit  * diff(normal_curve_hist$mids[1:2]) * length(sample_mean) 
+lines(xfit, yfit, lwd=3)
+```
+
